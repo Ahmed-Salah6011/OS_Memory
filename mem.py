@@ -48,27 +48,29 @@ def draw_mem(x, y, z):
         canvas.create_rectangle(100, (((x[i] / z) * 600) + 50), 300, ((((x[i] + y[i]) / z) * 600) + 50), width=5,
                                 outline='#ebebeb', fill='#ebebeb')
 
-        canvas.create_text(80, (((x[i] / z) * 600) + 50), text=x[i],font=("Purisa", 8))
+        canvas.create_text(80, (((x[i] / z) * 600) + 50), text=x[i], font=("Purisa", 8))
 
-        canvas.create_text(80, ((((x[i] + y[i]) / z) * 600) + 50), text=x[i] + y[i],font=("Purisa", 8))
+        canvas.create_text(80, ((((x[i] + y[i]) / z) * 600) + 50), text=x[i] + y[i], font=("Purisa", 8))
 
 
 def draw_segment(base, size, name, z):
     rect = canvas.create_rectangle(100, ((base / z) * 600) + 50, 300, (((base + size) / z) * 600) + 50, width=5,
-                                   outline='#ffe873',fill='#ffe873')
+                                   outline='#ffe873', fill='#ffe873')
 
-    l1=canvas.create_line(98, ((base / z) * 600) + 50 -2 , 303, ((base / z) * 600) + 50-2)
-    l2=canvas.create_line(98, (( (base+size) / z) * 600) + 50 +2 , 303, (( (base+size) / z) * 600) + 50+2)
+    l1 = canvas.create_line(98, ((base / z) * 600) + 50 - 2, 303, ((base / z) * 600) + 50 - 2)
+    l2 = canvas.create_line(98, (((base + size) / z) * 600) + 50 + 2, 303, (((base + size) / z) * 600) + 50 + 2)
 
-    t1 = canvas.create_text(320, ((base / z) * 600) + 50, text=str(base),font=("Purisa", 8))
+    t1 = canvas.create_text(320, ((base / z) * 600) + 50, text=str(base), font=("Purisa", 8))
 
-    t2 = canvas.create_text(320, (((base + size) / z) * 600) + 50, text=base + size,font=("Purisa", 8))
+    t2 = canvas.create_text(320, (((base + size) / z) * 600) + 50, text=base + size, font=("Purisa", 8))
 
-    t3 = canvas.create_text(180, (((((base + size) / z) * 600)  + ((base / z) * 600)) / 2)+ 50, text=name,font=("Purisa", 8))
+    t3 = canvas.create_text(180, (((((base + size) / z) * 600) + ((base / z) * 600)) / 2) + 50, text=name,
+                            font=("Purisa", 8))
 
-    rect_list = [rect, t1, t2, t3,l1,l2]
+    rect_list = [rect, t1, t2, t3, l1, l2]
 
     componects[base] = rect_list
+
 
 def clear_segement(base):
     canvas.delete(componects[base][0])
@@ -78,10 +80,12 @@ def clear_segement(base):
     canvas.delete(componects[base][4])
     canvas.delete(componects[base][5])
 
+
 def clear_rect(base, size):
-    canvas.create_rectangle(100, base+50, 300, base+size+50, width=5, outline='#ebebeb', fill='#ebebeb')
-    canvas.create_text(80, base+50, text=base)
-    canvas.create_text(80, base+size+50, text=base+size)
+    canvas.create_rectangle(100, base + 50, 300, base + size + 50, width=5, outline='#ebebeb', fill='#ebebeb')
+    canvas.create_text(80, base + 50, text=base)
+    canvas.create_text(80, base + size + 50, text=base + size)
+
 
 class first(object):
     holes_base = None
@@ -462,11 +466,14 @@ class last(object):
     def draw_tabel(self):
 
         process_name = self.textEdit_6.toPlainText()
-        val="""Segment Name\tBase Address\tSize\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}""".format(self.Process_Dict[process_name][0][0],
-            self.Process_Dict[process_name][1][0],self.Process_Dict[process_name][2][0],self.Process_Dict[process_name][0][1],
-            self.Process_Dict[process_name][1][1],self.Process_Dict[process_name][2][1],self.Process_Dict[process_name][0][2],
-            self.Process_Dict[process_name][1][2],self.Process_Dict[process_name][2][2] )
-        messagebox.showinfo("Address Table For "+process_name,val)
+        val = """Segment Name\tBase Address\tSize\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}""".format(
+            self.Process_Dict[process_name][0][0],
+            self.Process_Dict[process_name][1][0], self.Process_Dict[process_name][2][0],
+            self.Process_Dict[process_name][0][1],
+            self.Process_Dict[process_name][1][1], self.Process_Dict[process_name][2][1],
+            self.Process_Dict[process_name][0][2],
+            self.Process_Dict[process_name][1][2], self.Process_Dict[process_name][2][2])
+        messagebox.showinfo("Address Table For " + process_name, val)
 
     def deallocate(self):
 
@@ -499,7 +506,16 @@ class last(object):
         seg_s = value_of_textedit_3.splitlines()
 
         segments_size = [float(i) for i in seg_s]
-
+        ##sort by bigger
+        for i in range(len(segments_size)):
+            swapped=False
+            for j in range(len(segments_size)-(i+1)):
+                if(segments_size[j] < segments_size[j+1]):
+                    segments_size[j],segments_size[j+1] = segments_size[j+1],segments_size[j]
+                    segments_name[j],segments_name[j+1] = segments_name[j+1],segments_name[j]
+                    swapped=True
+            if(swapped==False):
+                break
         ###THOSE ARE THE BASE & SIZE OF THE HOLES
 
         ###BE CAREFUL WITH THE """""""""""""self""""""""" WORD DON'T FORGET TO USE IT
@@ -580,75 +596,102 @@ class last(object):
                     messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
             else:
-                messagebox.showerror("Space Error",'No Enough Memory to allocate')
+                messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
 
 
 
+        # elif (first_fit):
+        #     if (sum(self.H_size) >= sum(segments_size)):
+        #
+        #         indeces = []
+        #
+        #         H_s = list(self.H_size)
+        #
+        #         for i in range(len(segments_size)):
+        #
+        #             index = -1
+        #
+        #             for j in range(len(H_s)):
+        #
+        #                 if (H_s[j] >= segments_size[i]):
+        #                     index = j
+        #
+        #                     break
+        #
+        #             if (index >= 0):
+        #                 indeces.append(index)
+        #
+        #                 H_s[index] -= segments_size[i]
+        #
+        #         if (len(indeces) == len(segments_size)):
+        #
+        #             seg_name = []
+        #
+        #             seg_size = []
+        #
+        #             seg_base = []
+        #
+        #             i = 0
+        #
+        #             for index in indeces:
+        #                 seg_name.append(segments_name[i])
+        #
+        #                 seg_size.append(segments_size[i])
+        #
+        #                 seg_base.append(self.H_base[index])
+        #
+        #                 draw_segment(self.H_base[index], segments_size[i], 'P{}-'.format(self.p) + segments_name[i],
+        #                              self.Mem_size)
+        #
+        #                 self.H_base[index] += segments_size[i]
+        #
+        #                 i += 1
+        #
+        #             self.H_size = list(H_s)
+        #
+        #             p_name = 'P{}'.format(self.p)
+        #
+        #             self.p += 1
+        #
+        #             self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
         elif (first_fit):
-            if (sum(self.H_size) >= sum(segments_size)):
-
-                indeces = []
-
-                H_s = list(self.H_size)
-
-                for i in range(len(segments_size)):
-
-                    index = -1
-
-                    for j in range(len(H_s)):
-
-                        if (H_s[j] >= segments_size[i]):
-                            index = j
-
-                            break
-
-                    if (index >= 0):
-                        indeces.append(index)
-
-                        H_s[index] -= segments_size[i]
-
-                if (len(indeces) == len(segments_size)):
-
+                if sum(self.H_size) >= sum(segments_size) and max(self.H_size) >= max(segments_size):
+                    hole_size = self.H_size.copy()
+                    hole_base = self.H_base.copy()
+                    is_valid = 0
                     seg_name = []
-
+                    seg_base = []
                     seg_size = []
 
-                    seg_base = []
+                    for x in range(len(segments_size)):
+                        for y in range(len(segments_size)):
+                            if hole_size[y] >= segments_size[x]:
+                                seg_name.append(segments_name[x])
+                                seg_size.append(segments_size[x])
+                                seg_base.append(hole_base[y])
+                                hole_size[y] = hole_size[y] - segments_size[x]
+                                hole_base[y] = hole_base[y] + segments_size[x]
+                                is_valid += 1
+                                break
 
-                    i = 0
-
-                    for index in indeces:
-                        seg_name.append(segments_name[i])
-
-                        seg_size.append(segments_size[i])
-
-                        seg_base.append(self.H_base[index])
-
-                        draw_segment(self.H_base[index], segments_size[i], 'P{}-'.format(self.p) + segments_name[i],
-                                     self.Mem_size)
-
-                        self.H_base[index] += segments_size[i]
-
-                        i += 1
-
-                    self.H_size = list(H_s)
-
-                    p_name = 'P{}'.format(self.p)
-
-                    self.p += 1
-
-                    self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
-
+                    if (is_valid == len(segments_size)):
+                        for i in range(len(segments_size)):
+                            draw_segment(seg_base[i], seg_size[i], 'P{}-'.format(self.p) + seg_name[i],
+                                         self.Mem_size)
+                        self.H_size = hole_size.copy()
+                        self.H_base = hole_base.copy()
+                        p_name = 'P{}'.format(self.p)
+                        self.p += 1
+                        self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
+                    else:
+                        messagebox.showerror("Space Error", 'No Enough Memory to allocate')
                 else:
                     messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
-            else:
-                messagebox.showerror("Space Error",'No Enough Memory to allocate')
 
         else:
-            messagebox.showerror('Error','Please Choose Best-fit or First-fit algorithim')
-
+            messagebox.showerror('Error', 'Please Choose Best-fit or First-fit algorithim')
 
     def retranslateUi(self, MainWindow):
 
