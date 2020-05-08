@@ -58,7 +58,16 @@ def draw_segment(base, size, name, z):
 
     componects[base] = rect_list
 
+def clear_segement(base):
+    canvas.delete(componects[base][0])
+    canvas.delete(componects[base][1])
+    canvas.delete(componects[base][2])
+    canvas.delete(componects[base][3])
 
+def clear_rect(base, size):
+    canvas.create_rectangle(100, base+50, 300, base+size+50, width=5, outline='#ebebeb', fill='#ebebeb')
+    canvas.create_text(80, base+50, text=base)
+    canvas.create_text(80, base+size+50, text=base+size)
 
 class first(object):
     holes_base = None
