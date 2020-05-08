@@ -82,19 +82,9 @@ def clear_segement(base):
 
 
 def clear_rect(base, size,z):
-    canvas.create_rectangle(100, ((base / z) * 600) + 50, 300, (((base + size) / z) * 600) + 50, width=5,
-                                   outline='#ebebeb', fill='#ebebeb')
-
-
-
-    canvas.create_text(320, ((base / z) * 600) + 50, text=str(base), font=("Purisa", 8))
-
-    canvas.create_text(320, (((base + size) / z) * 600) + 50, text=base + size, font=("Purisa", 8))
-
-    # canvas.create_text(180, (((((base + size) / z) * 600) + ((base / z) * 600)) / 2) + 50, text=name,
-    #                         font=("Purisa", 8))
-
-
+    canvas.create_rectangle(100, ((base / z) * 600) + 50, 300, (((base + size) / z) * 600) + 50, width=5, outline='#ebebeb', fill='#ebebeb')
+    canvas.create_text(80, ((base / z) * 600) + 50, text=base)
+    canvas.create_text(80, (((base + size) / z) * 600) + 50, text=base+size)
 
 class first(object):
     holes_base = None
