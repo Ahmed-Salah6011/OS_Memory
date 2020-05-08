@@ -23,9 +23,18 @@ canvas = Canvas(width=600, height=800, bg='white')
 
 
 def draw_mem(x, y, z):
+    canvas.delete("all")
     canvas.pack(expand=YES, fill=BOTH)
 
-    canvas.create_rectangle(100, 50, 300, 50 + 600, width=5, outline='#b9d7ee', fill='#b9d7ee')
+    canvas.create_rectangle(100, 50, 300, 50 + 600, width=5, outline='#DC143C', fill='#DC143C')
+
+    canvas.create_rectangle(450, 75, 490, 100 + 50, width=5, outline='#000000', fill='#DC143C')
+    canvas.create_rectangle(450, 125, 490, 150 + 50, width=5, outline='#000000', fill='#ffe873')
+    canvas.create_rectangle(450, 175, 490, 175 + 50, width=5, outline='#000000', fill='#ebebeb')
+
+    canvas.create_text(548, 100, text='Memory Allocation')
+    canvas.create_text(545, 150, text='Process Allocation')
+    canvas.create_text(508, 200, text='Hole')
 
     canvas.create_text(80, 50, text='0')
 
@@ -39,22 +48,25 @@ def draw_mem(x, y, z):
         canvas.create_rectangle(100, (((x[i] / z) * 600) + 50), 300, ((((x[i] + y[i]) / z) * 600) + 50), width=5,
                                 outline='#ebebeb', fill='#ebebeb')
 
-        canvas.create_text(80, (((x[i] / z) * 600) + 50), text=x[i])
+        canvas.create_text(80, (((x[i] / z) * 600) + 50), text=x[i],font=("Purisa", 8))
 
-        canvas.create_text(80, ((((x[i] + y[i]) / z) * 600) + 50), text=x[i] + y[i])
+        canvas.create_text(80, ((((x[i] + y[i]) / z) * 600) + 50), text=x[i] + y[i],font=("Purisa", 8))
 
 
 def draw_segment(base, size, name, z):
     rect = canvas.create_rectangle(100, ((base / z) * 600) + 50, 300, (((base + size) / z) * 600) + 50, width=5,
-                                   outline='#ffe873', fill='#ffe873')
+                                   outline='#ffe873',fill='#ffe873')
 
-    t1 = canvas.create_text(320, ((base / z) * 600) + 50, text=str(base))
+    l1=canvas.create_line(98, ((base / z) * 600) + 50 -2 , 303, ((base / z) * 600) + 50-2)
+    l2=canvas.create_line(98, (( (base+size) / z) * 600) + 50 +2 , 303, (( (base+size) / z) * 600) + 50+2)
 
-    t2 = canvas.create_text(320, (((base + size) / z) * 600) + 50, text=base + size)
+    t1 = canvas.create_text(320, ((base / z) * 600) + 50, text=str(base),font=("Purisa", 8))
 
-    t3 = canvas.create_text(180, (((((base + size) / z) * 600)  + ((base / z) * 600)) / 2)+ 50, text=name)
+    t2 = canvas.create_text(320, (((base + size) / z) * 600) + 50, text=base + size,font=("Purisa", 8))
 
-    rect_list = [rect, t1, t2, t3]
+    t3 = canvas.create_text(180, (((((base + size) / z) * 600)  + ((base / z) * 600)) / 2)+ 50, text=name,font=("Purisa", 8))
+
+    rect_list = [rect, t1, t2, t3,l1,l2]
 
     componects[base] = rect_list
 
@@ -63,6 +75,8 @@ def clear_segement(base):
     canvas.delete(componects[base][1])
     canvas.delete(componects[base][2])
     canvas.delete(componects[base][3])
+    canvas.delete(componects[base][4])
+    canvas.delete(componects[base][5])
 
 def clear_rect(base, size):
     canvas.create_rectangle(100, base+50, 300, base+size+50, width=5, outline='#ebebeb', fill='#ebebeb')
@@ -222,29 +236,18 @@ class first(object):
 class last(object):
 
     def __init__(self, h_b, h_s, mem_size, Process_Dict=None):
-
         self.H_base = h_b
-
         self.H_size = h_s
-
         self.p = 1
-
         self.Mem_size = mem_size
-
         if Process_Dict == None:
-
             self.Process_Dict = dict()
-
         else:
-
             self.Process_Dict = dict(Process_Dict)
 
     def setupUi(self, MainWindow):
-
         MainWindow.setObjectName("MainWindow")
-
         MainWindow.resize(1125, 795)
-
         MainWindow.setStyleSheet("\n"
 
                                  "\n"
@@ -252,19 +255,12 @@ class last(object):
                                  "")
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-
         self.centralwidget.setObjectName("centralwidget")
-
         self.radioButton = QtWidgets.QRadioButton(self.centralwidget)
-
         self.radioButton.setGeometry(QtCore.QRect(40, 150, 171, 41))
-
         self.radioButton.setStyleSheet("font: 20pt \"MV Boli\";")
-
         self.radioButton.setObjectName("radioButton")
-
         self.radioButton_2 = QtWidgets.QRadioButton(self.centralwidget)
-
         self.radioButton_2.setGeometry(QtCore.QRect(260, 150, 171, 41))
 
         self.radioButton_2.setStyleSheet("font: 20pt \"MV Boli\";")
@@ -579,9 +575,12 @@ class last(object):
                     p_name = 'P{}'.format(self.p)
 
                     self.p += 1
-
                     self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
+                else:
+                    messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
+            else:
+                messagebox.showerror("Space Error",'No Enough Memory to allocate')
 
 
 
@@ -640,6 +639,16 @@ class last(object):
                     self.p += 1
 
                     self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
+
+                else:
+                    messagebox.showerror("Space Error", 'No Enough Memory to allocate')
+
+            else:
+                messagebox.showerror("Space Error",'No Enough Memory to allocate')
+
+        else:
+            messagebox.showerror('Error','Please Choose Best-fit or First-fit algorithim')
+
 
     def retranslateUi(self, MainWindow):
 
