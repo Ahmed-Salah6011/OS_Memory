@@ -199,26 +199,28 @@ class first(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def click(self):
-        value_of_textedit_1 = self.textEdit.toPlainText()
+        try:
+            value_of_textedit_1 = self.textEdit.toPlainText()
 
-        self.holes_size = value_of_textedit_1.splitlines()
+            self.holes_size = value_of_textedit_1.splitlines()
 
-        value_of_textedit_2 = self.textEdit_2.toPlainText()
+            value_of_textedit_2 = self.textEdit_2.toPlainText()
 
-        z = int(self.textEdit_3.toPlainText())
+            z = int(self.textEdit_3.toPlainText())
 
-        self.holes_base = value_of_textedit_2.splitlines()
+            self.holes_base = value_of_textedit_2.splitlines()
 
-        draw_mem(self.holes_base, self.holes_size, z)
+            draw_mem(self.holes_base, self.holes_size, z)
 
-        self.window = QtWidgets.QMainWindow()
+            self.window = QtWidgets.QMainWindow()
 
-        self.ui = last(self.holes_base, self.holes_size, z)
+            self.ui = last(self.holes_base, self.holes_size, z)
 
-        self.ui.setupUi(self.window)
+            self.ui.setupUi(self.window)
 
-        self.window.show()
-
+            self.window.show()
+        except :
+            messagebox.showerror("Error","Input Error")
     def get_att(self):
         return self.holes_size, self.holes_base
 
@@ -463,16 +465,17 @@ class last(object):
         self.pushButton.clicked.connect(self.allocate)
 
     def draw_tabel(self):
+       try:
+           process_name = self.textEdit_6.toPlainText()
+           val = """Segment Name\tBase Address\tSize\n"""
+           for j in range(len(self.Process_Dict[process_name][0])):
+               for i in range(3):
+                   val += """{}  \t\t""".format(self.Process_Dict[process_name][i][j])
+               val += '\n'
 
-        process_name = self.textEdit_6.toPlainText()
-        val = """Segment Name\tBase Address\tSize\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}""".format(
-            self.Process_Dict[process_name][0][0],
-            self.Process_Dict[process_name][1][0], self.Process_Dict[process_name][2][0],
-            self.Process_Dict[process_name][0][1],
-            self.Process_Dict[process_name][1][1], self.Process_Dict[process_name][2][1],
-            self.Process_Dict[process_name][0][2],
-            self.Process_Dict[process_name][1][2], self.Process_Dict[process_name][2][2])
-        messagebox.showinfo("Address Table For " + process_name, val)
+           messagebox.showinfo("Address Table For " + process_name, val)
+       except :
+           messagebox.showerror("Error", "Input Error")
 
     def CheckbeginOfhole(self, total, H_size, H_base):
         for x in range(len(H_size)):
@@ -492,230 +495,237 @@ class last(object):
                 return x
 
     def deallocate(self):
-        for x in range(len(self.H_size)):
-            if self.H_size==0:
-                del self.H_size[x]
-                del self.H_base[x]
+        try:
+            for x in range(len(self.H_size)):
+                if self.H_size == 0:
+                    del self.H_size[x]
+                    del self.H_base[x]
 
-        by_postion = self.radioButton_4.isChecked()
+            by_postion = self.radioButton_4.isChecked()
 
-        by_name = self.radioButton_3.isChecked()
+            by_name = self.radioButton_3.isChecked()
 
-        # variables are by_postion ,by_name these are the values of radio buttons
+            # variables are by_postion ,by_name these are the values of radio buttons
 
-        # address, area ,process_name values in text boxes
-        if by_name:
-            process_name = self.textEdit_6.toPlainText()
-            removed_process = self.Process_Dict[process_name]
-            for x in range(len(removed_process[1])):
-                clear_segement(removed_process[1][x])
-                begin =removed_process[1][x]
-                end   = removed_process[1][x] + removed_process[2][x]
-                if self.CheckbeginOfhole(begin,self.H_size,self.H_base) and self.CheckendOfhole(end,self.H_base) :
-                    pos1 = self.getUP(begin,self.H_size,self.H_base)
-                    pos2=self.H_base.index(end)
-                    self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x]+self.H_size[pos2]
-                    del self.H_size[pos2]
-                    del self.H_base[pos2]
-                elif self.CheckbeginOfhole(begin,self.H_size,self.H_base) and not self.CheckendOfhole(end,self.H_base) :
-                    pos1 = self.getUP(begin, self.H_size, self.H_base)
-                    self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
-                elif not self.CheckbeginOfhole(begin,self.H_size,self.H_base) and self.CheckendOfhole(end,self.H_base) :
-                    pos2 = self.H_base.index(end)
-                    self.H_size[pos2] =removed_process[2][x] + self.H_size[pos2]
-                    self.H_base[pos2]=removed_process[1][x]
-                else :
-                    self.H_size.append(removed_process[2][x])
-                    self.H_base.append(removed_process[1][x])
-            del self.Process_Dict[process_name]
+            # address, area ,process_name values in text boxes
+            if by_name:
+                process_name = self.textEdit_6.toPlainText()
+                removed_process = self.Process_Dict[process_name]
+                for x in range(len(removed_process[1])):
+                    clear_segement(removed_process[1][x])
+                    begin = removed_process[1][x]
+                    end = removed_process[1][x] + removed_process[2][x]
+                    if self.CheckbeginOfhole(begin, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
+                        pos1 = self.getUP(begin, self.H_size, self.H_base)
+                        pos2 = self.H_base.index(end)
+                        self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
+                        del self.H_size[pos2]
+                        del self.H_base[pos2]
+                    elif self.CheckbeginOfhole(begin, self.H_size, self.H_base) and not self.CheckendOfhole(end,
+                                                                                                            self.H_base):
+                        pos1 = self.getUP(begin, self.H_size, self.H_base)
+                        self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
+                    elif not self.CheckbeginOfhole(begin, self.H_size, self.H_base) and self.CheckendOfhole(end,
+                                                                                                            self.H_base):
+                        pos2 = self.H_base.index(end)
+                        self.H_size[pos2] = removed_process[2][x] + self.H_size[pos2]
+                        self.H_base[pos2] = removed_process[1][x]
+                    else:
+                        self.H_size.append(removed_process[2][x])
+                        self.H_base.append(removed_process[1][x])
+                del self.Process_Dict[process_name]
 
-        elif by_postion:
-            address = float(self.textEdit_7.toPlainText())
-            area = float(self.textEdit_5.toPlainText())
-            end  = address + area
-            clear_rect(address, area,self.Mem_size)
-            if self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end,self.H_base):
+            elif by_postion:
+                address = float(self.textEdit_7.toPlainText())
+                area = float(self.textEdit_5.toPlainText())
+                end = address + area
+                clear_rect(address, area, self.Mem_size)
+                if self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
                     pos1 = self.getUP(address, self.H_size, self.H_base)
                     pos2 = self.H_base.index(end)
                     self.H_size[pos1] = self.H_size[pos1] + area + self.H_size[pos2]
                     del self.H_size[pos2]
                     del self.H_base[pos2]
-            elif self.CheckbeginOfhole(address, self.H_size, self.H_base) and not self.CheckendOfhole(end,self.H_base):
+                elif self.CheckbeginOfhole(address, self.H_size, self.H_base) and not self.CheckendOfhole(end,
+                                                                                                          self.H_base):
                     pos1 = self.getUP(address, self.H_size, self.H_base)
                     self.H_size[pos1] = self.H_size[pos1] + area
-            elif not self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end,self.H_base):
+                elif not self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end,
+                                                                                                          self.H_base):
                     pos2 = self.H_base.index(end)
                     self.H_size[pos2] = area + self.H_size[pos2]
                     self.H_base[pos2] = address
-            else:
+                else:
                     self.H_base.append(address)
                     self.H_size.append(area)
+        except :
+            messagebox.showerror(" Error", 'Innput Error')
 
     def allocate(self):
+        try:
+            first_fit = self.radioButton.isChecked()
 
-        first_fit = self.radioButton.isChecked()
+            best_fit = self.radioButton_2.isChecked()
 
-        best_fit = self.radioButton_2.isChecked()
+            value_of_textedit_4 = self.textEdit_4.toPlainText()
 
-        value_of_textedit_4 = self.textEdit_4.toPlainText()
+            segments_name = value_of_textedit_4.splitlines()
 
-        segments_name = value_of_textedit_4.splitlines()
+            value_of_textedit_3 = self.textEdit_3.toPlainText()
 
-        value_of_textedit_3 = self.textEdit_3.toPlainText()
+            seg_s = value_of_textedit_3.splitlines()
 
-        seg_s = value_of_textedit_3.splitlines()
+            segments_size = [float(i) for i in seg_s]
+            ##sort by bigger
+            for i in range(len(segments_size)):
+                swapped = False
+                for j in range(len(segments_size) - (i + 1)):
+                    if (segments_size[j] < segments_size[j + 1]):
+                        segments_size[j], segments_size[j + 1] = segments_size[j + 1], segments_size[j]
+                        segments_name[j], segments_name[j + 1] = segments_name[j + 1], segments_name[j]
+                        swapped = True
+                if (swapped == False):
+                    break
+            ###THOSE ARE THE BASE & SIZE OF THE HOLES
 
-        segments_size = [float(i) for i in seg_s]
-        ##sort by bigger
-        for i in range(len(segments_size)):
-            swapped=False
-            for j in range(len(segments_size)-(i+1)):
-                if(segments_size[j] < segments_size[j+1]):
-                    segments_size[j],segments_size[j+1] = segments_size[j+1],segments_size[j]
-                    segments_name[j],segments_name[j+1] = segments_name[j+1],segments_name[j]
-                    swapped=True
-            if(swapped==False):
-                break
-        ###THOSE ARE THE BASE & SIZE OF THE HOLES
+            ###BE CAREFUL WITH THE """""""""""""self""""""""" WORD DON'T FORGET TO USE IT
 
-        ###BE CAREFUL WITH THE """""""""""""self""""""""" WORD DON'T FORGET TO USE IT
+            # self.H_base
 
-        # self.H_base
+            # self.H_size
 
-        # self.H_size
+            # this is the dictionary of processes and their segment names and base addresses and sizes any segment located
 
-        # this is the dictionary of processes and their segment names and base addresses and sizes any segment located
+            ##please but the data in process dict with the key as process name with P1 or P2 ...etc and the
 
-        ##please but the data in process dict with the key as process name with P1 or P2 ...etc and the
+            # value is list of 3 lists [[segment names list],[segments base addresses list],[segment size list]]
 
-        # value is list of 3 lists [[segment names list],[segments base addresses list],[segment size list]]
+            # self.Process_Dict
 
-        # self.Process_Dict
+            # variables are first_fit , best_fit these are the values of radio buttons
 
-        # variables are first_fit , best_fit these are the values of radio buttons
+            # segments_name, segments_size are 2 lists of segments data you need to complete drawing
 
-        # segments_name, segments_size are 2 lists of segments data you need to complete drawing
+            if (best_fit):
 
-        if (best_fit):
+                if (sum(self.H_size) >= sum(segments_size)):
 
-            if (sum(self.H_size) >= sum(segments_size)):
+                    indeces = []
 
-                indeces = []
+                    H_s = list(self.H_size)
 
-                H_s = list(self.H_size)
+                    for i in range(len(segments_size)):
 
-                for i in range(len(segments_size)):
+                        min_value = 10000000000
 
-                    min_value = 10000000000
+                        min_index = -1
 
-                    min_index = -1
+                        for j in range(len(H_s)):
 
-                    for j in range(len(H_s)):
+                            if ((H_s[j] - segments_size[i]) < min_value and (H_s[j] - segments_size[i]) >= 0):
+                                min_value = H_s[j] - segments_size[i]
 
-                        if ((H_s[j] - segments_size[i]) < min_value and (H_s[j] - segments_size[i]) >= 0):
-                            min_value = H_s[j] - segments_size[i]
+                                min_index = j
 
-                            min_index = j
+                        if (min_index >= 0):
+                            indeces.append(min_index)
 
-                    if (min_index >= 0):
-                        indeces.append(min_index)
+                            H_s[min_index] -= segments_size[i]
 
-                        H_s[min_index] -= segments_size[i]
+                    if (len(indeces) == len(segments_size)):
 
-                if (len(indeces) == len(segments_size)):
+                        seg_name = []
 
-                    seg_name = []
+                        seg_size = []
 
-                    seg_size = []
+                        seg_base = []
 
-                    seg_base = []
+                        i = 0
 
-                    i = 0
+                        for index in indeces:
+                            seg_name.append(segments_name[i])
 
-                    for index in indeces:
-                        seg_name.append(segments_name[i])
+                            seg_size.append(segments_size[i])
 
-                        seg_size.append(segments_size[i])
+                            seg_base.append(self.H_base[index])
 
-                        seg_base.append(self.H_base[index])
+                            draw_segment(self.H_base[index], segments_size[i], 'P{}-'.format(self.p) + segments_name[i],
+                                         self.Mem_size)
 
-                        draw_segment(self.H_base[index], segments_size[i], 'P{}-'.format(self.p) + segments_name[i],
-                                     self.Mem_size)
+                            self.H_base[index] += segments_size[i]
 
-                        self.H_base[index] += segments_size[i]
+                            i += 1
 
-                        i += 1
+                        self.H_size = list(H_s)
 
-                    self.H_size = list(H_s)
+                        p_name = 'P{}'.format(self.p)
 
-                    p_name = 'P{}'.format(self.p)
+                        self.p += 1
+                        self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
+                    else:
+                        messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
-                    self.p += 1
-                    self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
                 else:
                     messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
-            else:
-                messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
 
 
-
-        # elif (first_fit):
-        #     if (sum(self.H_size) >= sum(segments_size)):
-        #
-        #         indeces = []
-        #
-        #         H_s = list(self.H_size)
-        #
-        #         for i in range(len(segments_size)):
-        #
-        #             index = -1
-        #
-        #             for j in range(len(H_s)):
-        #
-        #                 if (H_s[j] >= segments_size[i]):
-        #                     index = j
-        #
-        #                     break
-        #
-        #             if (index >= 0):
-        #                 indeces.append(index)
-        #
-        #                 H_s[index] -= segments_size[i]
-        #
-        #         if (len(indeces) == len(segments_size)):
-        #
-        #             seg_name = []
-        #
-        #             seg_size = []
-        #
-        #             seg_base = []
-        #
-        #             i = 0
-        #
-        #             for index in indeces:
-        #                 seg_name.append(segments_name[i])
-        #
-        #                 seg_size.append(segments_size[i])
-        #
-        #                 seg_base.append(self.H_base[index])
-        #
-        #                 draw_segment(self.H_base[index], segments_size[i], 'P{}-'.format(self.p) + segments_name[i],
-        #                              self.Mem_size)
-        #
-        #                 self.H_base[index] += segments_size[i]
-        #
-        #                 i += 1
-        #
-        #             self.H_size = list(H_s)
-        #
-        #             p_name = 'P{}'.format(self.p)
-        #
-        #             self.p += 1
-        #
-        #             self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
-        elif (first_fit):
+            # elif (first_fit):
+            #     if (sum(self.H_size) >= sum(segments_size)):
+            #
+            #         indeces = []
+            #
+            #         H_s = list(self.H_size)
+            #
+            #         for i in range(len(segments_size)):
+            #
+            #             index = -1
+            #
+            #             for j in range(len(H_s)):
+            #
+            #                 if (H_s[j] >= segments_size[i]):
+            #                     index = j
+            #
+            #                     break
+            #
+            #             if (index >= 0):
+            #                 indeces.append(index)
+            #
+            #                 H_s[index] -= segments_size[i]
+            #
+            #         if (len(indeces) == len(segments_size)):
+            #
+            #             seg_name = []
+            #
+            #             seg_size = []
+            #
+            #             seg_base = []
+            #
+            #             i = 0
+            #
+            #             for index in indeces:
+            #                 seg_name.append(segments_name[i])
+            #
+            #                 seg_size.append(segments_size[i])
+            #
+            #                 seg_base.append(self.H_base[index])
+            #
+            #                 draw_segment(self.H_base[index], segments_size[i], 'P{}-'.format(self.p) + segments_name[i],
+            #                              self.Mem_size)
+            #
+            #                 self.H_base[index] += segments_size[i]
+            #
+            #                 i += 1
+            #
+            #             self.H_size = list(H_s)
+            #
+            #             p_name = 'P{}'.format(self.p)
+            #
+            #             self.p += 1
+            #
+            #             self.Process_Dict[p_name] = [seg_name, seg_base, seg_size]
+            elif (first_fit):
                 if sum(self.H_size) >= sum(segments_size) and max(self.H_size) >= max(segments_size):
                     hole_size = self.H_size.copy()
                     hole_base = self.H_base.copy()
@@ -750,8 +760,12 @@ class last(object):
                     messagebox.showerror("Space Error", 'No Enough Memory to allocate')
 
 
-        else:
-            messagebox.showerror('Error', 'Please Choose Best-fit or First-fit algorithim')
+            else:
+                messagebox.showerror('Error', 'Please Choose Best-fit or First-fit algorithim')
+        except :
+            messagebox.showerror('Error', 'Error in input')
+
+
 
     def retranslateUi(self, MainWindow):
 
