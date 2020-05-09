@@ -36,14 +36,14 @@ def draw_mem(x, y, z):
     canvas.create_text(545, 150, text='Process Allocation')
     canvas.create_text(508, 200, text='Hole')
 
-    canvas.create_text(80, 50, text='0')
+    canvas.create_text(80, 50, text=float(0))
 
-    canvas.create_text(80, 600 + 50, text=z)
+    canvas.create_text(80, 600 + 50, text=float(z))
 
     for i in range(len(x)):
-        x[i] = int(x[i])
+        x[i] = float(x[i])
 
-        y[i] = int(y[i])
+        y[i] = float(y[i])
 
         canvas.create_rectangle(100, (((x[i] / z) * 600) + 50), 300, ((((x[i] + y[i]) / z) * 600) + 50), width=5,
                                 outline='#ebebeb', fill='#ebebeb')
@@ -474,21 +474,84 @@ class last(object):
             self.Process_Dict[process_name][1][2], self.Process_Dict[process_name][2][2])
         messagebox.showinfo("Address Table For " + process_name, val)
 
+    def CheckbeginOfhole(self, total, H_size, H_base):
+        for x in range(len(H_size)):
+            if total == H_size[x] + H_base[x]:
+                return True
+        return False
+
+    def CheckendOfhole(self, total, H_base):
+        for x in range(len(H_base)):
+            if total == H_base[x]:
+                return True
+        return False
+
+    def getUP(self, begin, Hsize, Hbase):
+        for x in range(len(Hsize)):
+            if begin == Hsize[x] + Hbase[x]:
+                return x
+
     def deallocate(self):
+        for x in range(len(self.H_size)):
+            if self.H_size == 0:
+                del self.H_size[x]
+                del self.H_base[x]
 
-        by_postion = radioButton_4.isChecked()
+        by_postion = self.radioButton_4.isCshecked()
 
-        by_name = radioButton_3.isChecked()
-
-        address = int(self.textEdit_7.toPlainText())
-
-        area = int(self.textEdit_5.toPlainText())
-
-        process_name = int(self.textEdit_6.toPlainText())
+        by_name = self.radioButton_3.isChecked()
 
         # variables are by_postion ,by_name these are the values of radio buttons
 
         # address, area ,process_name values in text boxes
+        if by_name:
+            process_name = self.textEdit_6.toPlainText()
+            removed_process = self.Process_Dict[process_name]
+            for x in range(len(removed_process[1])):
+                clear_segement(removed_process[1][x])
+                begin = removed_process[1][x]
+                end = removed_process[1][x] + removed_process[2][x]
+                if self.CheckbeginOfhole(begin, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
+                    pos1 = self.getUP(begin, self.H_size, self.H_base)
+                    pos2 = self.H_base.index(end)
+                    self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
+                    del self.H_size[pos2]
+                    del self.H_base[pos2]
+                elif self.CheckbeginOfhole(begin, self.H_size, self.H_base) and not self.CheckendOfhole(end,
+                                                                                                        self.H_base):
+                    pos1 = self.getUP(begin, self.H_size, self.H_base)
+                    self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
+                elif not self.CheckbeginOfhole(begin, self.H_size, self.H_base) and self.CheckendOfhole(end,
+                                                                                                        self.H_base):
+                    pos2 = self.H_base.index(end)
+                    self.H_size[pos2] = removed_process[2][x] + self.H_size[pos2]
+                    self.H_base[pos2] = removed_process[1][x]
+                else:
+                    self.H_size.append(removed_process[2][x])
+                    self.H_base.append(removed_process[1][x])
+            del self.Process_Dict[process_name]
+
+        elif by_postion:
+            address = float(self.textEdit_7.toPlainText())
+            area = float(self.textEdit_5.toPlainText())
+            end = address + area
+            clear_rect(address, area, self.Mem_size)
+            if self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
+                pos1 = self.getUP(address, self.H_size, self.H_base)
+                pos2 = self.H_base.index(end)
+                self.H_size[pos1] = self.H_size[pos1] + area + self.H_size[pos2]
+                del self.H_size[pos2]
+                del self.H_base[pos2]
+            elif self.CheckbeginOfhole(address, self.H_size, self.H_base) and not self.CheckendOfhole(end, self.H_base):
+                pos1 = self.getUP(address, self.H_size, self.H_base)
+                self.H_size[pos1] = self.H_size[pos1] + area
+            elif not self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
+                pos2 = self.H_base.index(end)
+                self.H_size[pos2] = area + self.H_size[pos2]
+                self.H_base[pos2] = address
+            else:
+                self.H_base.append(address)
+                self.H_size.append(area)
 
     def allocate(self):
 
