@@ -463,15 +463,13 @@ class last(object):
         self.pushButton.clicked.connect(self.allocate)
 
     def draw_tabel(self):
-
         process_name = self.textEdit_6.toPlainText()
-        val = """Segment Name\tBase Address\tSize\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}\n{}  \t\t{}  \t\t{}""".format(
-            self.Process_Dict[process_name][0][0],
-            self.Process_Dict[process_name][1][0], self.Process_Dict[process_name][2][0],
-            self.Process_Dict[process_name][0][1],
-            self.Process_Dict[process_name][1][1], self.Process_Dict[process_name][2][1],
-            self.Process_Dict[process_name][0][2],
-            self.Process_Dict[process_name][1][2], self.Process_Dict[process_name][2][2])
+        val = """Segment Name\tBase Address\tSize\n"""
+        for j in range(len(self.Process_Dict[process_name][0])):
+            for i in range(3):
+                val+= """{}  \t\t""".format(self.Process_Dict[process_name][i][j])
+            val+='\n'
+
         messagebox.showinfo("Address Table For " + process_name, val)
 
     def CheckbeginOfhole(self, total, H_size, H_base):
