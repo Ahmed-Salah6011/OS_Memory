@@ -493,11 +493,11 @@ class last(object):
 
     def deallocate(self):
         for x in range(len(self.H_size)):
-            if self.H_size == 0:
+            if self.H_size==0:
                 del self.H_size[x]
                 del self.H_base[x]
 
-        by_postion = self.radioButton_4.isCshecked()
+        by_postion = self.radioButton_4.isChecked()
 
         by_name = self.radioButton_3.isChecked()
 
@@ -509,24 +509,22 @@ class last(object):
             removed_process = self.Process_Dict[process_name]
             for x in range(len(removed_process[1])):
                 clear_segement(removed_process[1][x])
-                begin = removed_process[1][x]
-                end = removed_process[1][x] + removed_process[2][x]
-                if self.CheckbeginOfhole(begin, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
-                    pos1 = self.getUP(begin, self.H_size, self.H_base)
-                    pos2 = self.H_base.index(end)
-                    self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
+                begin =removed_process[1][x]
+                end   = removed_process[1][x] + removed_process[2][x]
+                if self.CheckbeginOfhole(begin,self.H_size,self.H_base) and self.CheckendOfhole(end,self.H_base) :
+                    pos1 = self.getUP(begin,self.H_size,self.H_base)
+                    pos2=self.H_base.index(end)
+                    self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x]+self.H_size[pos2]
                     del self.H_size[pos2]
                     del self.H_base[pos2]
-                elif self.CheckbeginOfhole(begin, self.H_size, self.H_base) and not self.CheckendOfhole(end,
-                                                                                                        self.H_base):
+                elif self.CheckbeginOfhole(begin,self.H_size,self.H_base) and not self.CheckendOfhole(end,self.H_base) :
                     pos1 = self.getUP(begin, self.H_size, self.H_base)
                     self.H_size[pos1] = self.H_size[pos1] + removed_process[2][x] + self.H_size[pos2]
-                elif not self.CheckbeginOfhole(begin, self.H_size, self.H_base) and self.CheckendOfhole(end,
-                                                                                                        self.H_base):
+                elif not self.CheckbeginOfhole(begin,self.H_size,self.H_base) and self.CheckendOfhole(end,self.H_base) :
                     pos2 = self.H_base.index(end)
-                    self.H_size[pos2] = removed_process[2][x] + self.H_size[pos2]
-                    self.H_base[pos2] = removed_process[1][x]
-                else:
+                    self.H_size[pos2] =removed_process[2][x] + self.H_size[pos2]
+                    self.H_base[pos2]=removed_process[1][x]
+                else :
                     self.H_size.append(removed_process[2][x])
                     self.H_base.append(removed_process[1][x])
             del self.Process_Dict[process_name]
@@ -534,24 +532,24 @@ class last(object):
         elif by_postion:
             address = float(self.textEdit_7.toPlainText())
             area = float(self.textEdit_5.toPlainText())
-            end = address + area
-            clear_rect(address, area, self.Mem_size)
-            if self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
-                pos1 = self.getUP(address, self.H_size, self.H_base)
-                pos2 = self.H_base.index(end)
-                self.H_size[pos1] = self.H_size[pos1] + area + self.H_size[pos2]
-                del self.H_size[pos2]
-                del self.H_base[pos2]
-            elif self.CheckbeginOfhole(address, self.H_size, self.H_base) and not self.CheckendOfhole(end, self.H_base):
-                pos1 = self.getUP(address, self.H_size, self.H_base)
-                self.H_size[pos1] = self.H_size[pos1] + area
-            elif not self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end, self.H_base):
-                pos2 = self.H_base.index(end)
-                self.H_size[pos2] = area + self.H_size[pos2]
-                self.H_base[pos2] = address
+            end  = address + area
+            clear_rect(address, area,self.Mem_size)
+            if self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end,self.H_base):
+                    pos1 = self.getUP(address, self.H_size, self.H_base)
+                    pos2 = self.H_base.index(end)
+                    self.H_size[pos1] = self.H_size[pos1] + area + self.H_size[pos2]
+                    del self.H_size[pos2]
+                    del self.H_base[pos2]
+            elif self.CheckbeginOfhole(address, self.H_size, self.H_base) and not self.CheckendOfhole(end,self.H_base):
+                    pos1 = self.getUP(address, self.H_size, self.H_base)
+                    self.H_size[pos1] = self.H_size[pos1] + area
+            elif not self.CheckbeginOfhole(address, self.H_size, self.H_base) and self.CheckendOfhole(end,self.H_base):
+                    pos2 = self.H_base.index(end)
+                    self.H_size[pos2] = area + self.H_size[pos2]
+                    self.H_base[pos2] = address
             else:
-                self.H_base.append(address)
-                self.H_size.append(area)
+                    self.H_base.append(address)
+                    self.H_size.append(area)
 
     def allocate(self):
 
